@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@motion-game/protocol": ["./packages/protocol/src/index.ts"]
+    }
+  },
+  "references": [
+    { "path": "./packages/protocol" },
+    { "path": "./server" },
+    { "path": "./client" }
+  ]
+}
