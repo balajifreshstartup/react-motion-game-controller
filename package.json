@@ -1,0 +1,28 @@
+{
+  "name": "motion-game-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n \"server,client\" -c \"cyan,magenta\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --workspace=@motion-game/server run dev",
+    "dev:client": "npm --workspace=@motion-game/client run dev",
+    "build": "npm --workspace=@motion-game/protocol run build && npm --workspace=@motion-game/server run build && npm --workspace=@motion-game/client run build",
+    "typecheck": "npm run --workspaces --if-present typecheck",
+    "lint": "npm run --workspaces --if-present lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "download:model": "node scripts/download-model.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "concurrently": "^9.0.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1"
+  }
+}
