@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Award, Flame, Heart, Play, Pause, RotateCcw, Smartphone, Zap } from 'lucide-react';
+import { Activity, Award, Flame, Heart, LayoutGrid, Play, Pause, RotateCcw, Smartphone, Zap } from 'lucide-react';
 import type { GameState, GameStats } from './types.js';
 
 interface GameHUDProps {
@@ -11,6 +11,7 @@ interface GameHUDProps {
   onPauseToggle: () => void;
   onRestart: () => void;
   onOpenPairing: () => void;
+  onBackToLobby?: () => void;
 }
 
 export const GameHUD: React.FC<GameHUDProps> = ({
@@ -22,6 +23,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
   onPauseToggle,
   onRestart,
   onOpenPairing,
+  onBackToLobby,
 }) => {
   return (
     <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 sm:p-6 select-none">
@@ -93,10 +95,20 @@ export const GameHUD: React.FC<GameHUDProps> = ({
 
           {/* Action buttons */}
           <div className="flex items-center gap-1">
+            {onBackToLobby && (
+              <button
+                onClick={onBackToLobby}
+                title="Change Game (Arcade Hub)"
+                className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-750 text-slate-300 border border-slate-700 hover:text-white transition-all shadow-md flex items-center gap-1.5 text-xs font-bold"
+              >
+                <LayoutGrid className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Games</span>
+              </button>
+            )}
             <button
               onClick={onPauseToggle}
               title="Pause Game (P)"
-              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 hover:text-white transition-all shadow-md"
+              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-750 text-slate-300 border border-slate-700 hover:text-white transition-all shadow-md"
             >
               {gameState === 'PAUSED' ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
             </button>

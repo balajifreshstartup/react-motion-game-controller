@@ -1,5 +1,5 @@
 import React from 'react';
-import { Columns2, Gamepad2, Settings, Smartphone } from 'lucide-react';
+import { Columns2, Gamepad2, Settings, Smartphone, Sparkles } from 'lucide-react';
 
 export type AppMode = 'game' | 'controller' | 'dual';
 
@@ -7,24 +7,32 @@ interface NavbarProps {
   currentMode: AppMode;
   onSelectMode: (mode: AppMode) => void;
   onOpenSettings: () => void;
+  onGoToLobby?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentMode,
   onSelectMode,
   onOpenSettings,
+  onGoToLobby,
 }) => {
   return (
     <nav className="w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 py-2.5 flex items-center justify-between z-30 select-none">
-      {/* Brand */}
-      <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-sm">
-          🏃
+      {/* Brand / Clickable to go back to Arcade Lobby */}
+      <div
+        onClick={onGoToLobby}
+        className="flex items-center gap-2.5 cursor-pointer group"
+        title="Return to Game Selection Lobby"
+      >
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-sm group-hover:scale-105 transition-transform">
+          🎮
         </div>
         <div>
-          <span className="font-extrabold text-sm tracking-tight text-white">Motion Dash</span>
+          <span className="font-extrabold text-sm tracking-tight text-white group-hover:text-cyan-300 transition-colors">
+            Motion Arcade
+          </span>
           <span className="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
-            Controller MVP
+            2 Games
           </span>
         </div>
       </div>
@@ -41,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <Gamepad2 className="w-3.5 h-3.5" />
-          <span>Game</span>
+          <span>Arcade</span>
         </button>
 
         <button
@@ -54,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <Smartphone className="w-3.5 h-3.5" />
-          <span>Controller</span>
+          <span>Phone Controller</span>
         </button>
 
         <button

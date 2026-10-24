@@ -9,9 +9,15 @@ interface GameCanvasProps {
   wsUrl?: string;
   pairingToken?: string;
   onOpenPairing: () => void;
+  onBackToLobby?: () => void;
 }
 
-export const GameCanvas: React.FC<GameCanvasProps> = ({ wsUrl, pairingToken, onOpenPairing }) => {
+export const GameCanvas: React.FC<GameCanvasProps> = ({
+  wsUrl,
+  pairingToken,
+  onOpenPairing,
+  onBackToLobby,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<GameEngine | null>(null);
 
@@ -121,6 +127,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({ wsUrl, pairingToken, onO
           onPauseToggle={handlePauseToggle}
           onRestart={handleRestart}
           onOpenPairing={onOpenPairing}
+          onBackToLobby={onBackToLobby}
         />
       </div>
     </div>
