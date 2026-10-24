@@ -34,11 +34,11 @@ export class GameEngine {
     runAnimTime: 0,
   };
 
-  // Game physics & mechanics
-  private gravity = 0.62;
-  private jumpForce = -13.8;
-  private baseSpeed = 340; // px/sec
-  private currentSpeed = 340;
+  // Game physics & mechanics (tuned for accessible motion gameplay)
+  private gravity = 0.56;
+  private jumpForce = -12.4;
+  private baseSpeed = 220; // px/sec (relaxed and accessible pace)
+  private currentSpeed = 220;
   private speedMultiplier = 1.0;
   private distanceTraveled = 0;
   private score = 0;
@@ -294,8 +294,8 @@ export class GameEngine {
     this.distanceTraveled += frameDistance;
     this.score = Math.floor(this.distanceTraveled / 10) + this.coins * 100;
 
-    // Gradual difficulty increase
-    this.speedMultiplier = 1.0 + Math.min(1.2, this.distanceTraveled / 8000);
+    // Very gradual difficulty increase capped for comfortable play
+    this.speedMultiplier = 1.0 + Math.min(0.35, this.distanceTraveled / 16000);
     this.currentSpeed = this.baseSpeed * this.speedMultiplier;
 
     // Smooth horizontal lane interpolation
@@ -353,8 +353,8 @@ export class GameEngine {
     this.nextObstacleDist -= frameDistance;
     if (this.nextObstacleDist <= 0) {
       this.spawnObstacle(screenWidth);
-      // Spawn distance between 320 and 520 px
-      this.nextObstacleDist = 320 + Math.random() * 200;
+      // Spawn distance between 580 and 840 px (ample reaction time for motions)
+      this.nextObstacleDist = 580 + Math.random() * 260;
     }
 
     // Move existing obstacles leftwards

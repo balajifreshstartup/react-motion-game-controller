@@ -2,6 +2,8 @@ export type TennisGameState = 'SERVE_PLAYER' | 'SERVE_AI' | 'RALLY' | 'POINT_WON
 
 export type ShotType = 'DRIVE' | 'SMASH' | 'SLICE' | 'SERVE';
 
+export type TennisSpeedMode = 'relaxed' | 'normal' | 'fast';
+
 export interface TennisPointScore {
   player: number; // 0=Love, 1=15, 2=30, 3=40, 4=Game/Adv
   ai: number;
@@ -20,6 +22,7 @@ export interface TennisStats {
   aiGames: number;
   lastShotType: string | null;
   server: 'player' | 'ai';
+  speedMode: TennisSpeedMode;
 }
 
 export interface Ball {

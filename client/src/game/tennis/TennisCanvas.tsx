@@ -43,6 +43,7 @@ export const TennisCanvas: React.FC<TennisCanvasProps> = ({
     aiGames: 0,
     lastShotType: null,
     server: 'player',
+    speedMode: 'relaxed',
   });
   const [lastFeedback, setLastFeedback] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -169,6 +170,30 @@ export const TennisCanvas: React.FC<TennisCanvasProps> = ({
 
         {/* Right Action Icons */}
         <div className="flex items-center gap-2">
+          {/* Speed Toggle Button */}
+          <button
+            type="button"
+            onClick={() => {
+              const nextMode =
+                stats.speedMode === 'relaxed'
+                  ? 'normal'
+                  : stats.speedMode === 'normal'
+                  ? 'fast'
+                  : 'relaxed';
+              engineRef.current?.setSpeedMode(nextMode);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-bold transition-all shadow-md"
+            title="Adjust Ball Speed (Relaxed / Normal / Fast)"
+          >
+            <span>
+              {stats.speedMode === 'relaxed'
+                ? '🐢 Relaxed'
+                : stats.speedMode === 'normal'
+                ? '⚡ Normal'
+                : '🔥 Fast'}
+            </span>
+          </button>
+
           {/* Mute Button */}
           <button
             type="button"

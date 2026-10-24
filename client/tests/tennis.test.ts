@@ -125,4 +125,19 @@ describe('2D Tennis Engine & Motion Controls', () => {
 
     engine.destroy();
   });
+
+  it('supports adjusting speed mode (relaxed, normal, fast)', () => {
+    const canvas = createMockCanvas();
+    const engine = new TennisEngine(canvas, {
+      onStatsUpdate: vi.fn(),
+      onStateChange: vi.fn(),
+      onFeedback: vi.fn(),
+    });
+
+    expect(engine.getSpeedMode()).toBe('relaxed');
+    engine.setSpeedMode('normal');
+    expect(engine.getSpeedMode()).toBe('normal');
+
+    engine.destroy();
+  });
 });

@@ -10,6 +10,7 @@ import type {
   TennisGameState,
   TennisParticle,
   TennisPointScore,
+  TennisSpeedMode,
   TennisStats,
 } from './types.js';
 
@@ -28,6 +29,29 @@ export class TennisEngine {
   private animationFrameId: number | null = null;
   private lastFrameTime = 0;
   private isDestroyed = false;
+  private speedMode: TennisSpeedMode = 'relaxed'; // Default to relaxed for smooth motion play
+
+  public setSpeedMode(mode: TennisSpeedMode): void {
+    this.speedMode = mode;
+    this.dispatchStats();
+  }
+
+  public getSpeedMode(): TennisSpeedMode {
+    return this.speedMode;
+  }
+
+  private getSpeedMultiplier(): number {
+    switch (this.speedMode) {
+      case 'relaxed':
+        return 0.65;
+      case 'normal':
+        return 0.85;
+      case 'fast':
+        return 1.1;
+      default:
+        return 0.65;
+    }
+  }
 
   // Ball
   private ball: Ball = {
@@ -301,12 +325,13 @@ export class TennisEngine {
       const targetX = this.court.centerServiceX + (Math.random() - 0.5) * 140;
       const targetY = this.court.serviceTopY + 30;
       const distY = targetY - this.ball.y;
-      const speedY = -420;
+      const mult = this.getSpeedMultiplier();
+      const speedY = -340 * mult; // Smooth arc, around -220 px/sec in relaxed
       const time = distY / speedY;
 
       this.ball.vy = speedY;
       this.ball.vx = (targetX - this.ball.x) / time;
-      this.ball.vz = 3.6;
+      this.ball.vz = 3.8;
     } else {
       this.ai.isSwinging = true;
       this.ai.swingProgress = 0;
@@ -315,12 +340,13 @@ export class TennisEngine {
       const targetX = this.court.centerServiceX + (Math.random() - 0.5) * 140;
       const targetY = this.court.serviceBottomY - 30;
       const distY = targetY - this.ball.y;
-      const speedY = 380;
+      const mult = this.getSpeedMultiplier();
+      const speedY = 310 * mult; // Around 200 px/sec in relaxed
       const time = distY / speedY;
 
       this.ball.vy = speedY;
       this.ball.vx = (targetX - this.ball.x) / time;
-      this.ball.vz = 3.4;
+      this.ball.vz = 3.6;
     }
 
     this.dispatchStats();
@@ -345,8 +371,8 @@ export class TennisEngine {
     const dy = this.ball.y - this.player.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    // Hit box allows reaching within 65px radius when ball is playable height
-    if (dist < 68 && this.ball.z < 65 && this.ball.vy > 0) {
+    // Generous and accessible hit box (92px radius and up to 90px height)
+    if (dist < 92 && this.ball.z < 90 && this.ball.vy > -60) {
       this.hitBall('player', type);
     }
   }
@@ -362,29 +388,30 @@ export class TennisEngine {
     tennisAudio.playHit(type);
     this.createHitParticles(this.ball.x, this.ball.y, type);
 
-    let speedY = hitter === 'player' ? -520 : 460;
-    let vz = 4.2;
+    const mult = this.getSpeedMultiplier();
+    let speedY = (hitter === 'player' ? -380 : 340) * mult;
+    let vz = 3.9;
     let targetX = hitter === 'player' ? this.court.left + Math.random() * (this.court.right - this.court.left) : this.player.x;
 
     if (type === 'SMASH') {
-      speedY = hitter === 'player' ? -680 : 560;
-      vz = 2.4; // flat high-velocity cannon
-      this.screenShake = 6;
+      speedY = (hitter === 'player' ? -480 : 420) * mult;
+      vz = 2.6; // flatter smash
+      this.screenShake = 5;
       this.addFloatingText('POWER SMASH! 🔥', this.ball.x, this.ball.y, '#f59e0b');
     } else if (type === 'SLICE') {
-      speedY = hitter === 'player' ? -380 : 340;
-      vz = 5.2; // high arc, drops short
+      speedY = (hitter === 'player' ? -280 : 260) * mult;
+      vz = 4.8; // higher hangtime arc, drops short
       this.addFloatingText('NICE SLICE! 🎾', this.ball.x, this.ball.y, '#a855f7');
     } else {
-      if (Math.abs(this.ball.x - (hitter === 'player' ? this.player.x : this.ai.x)) < 15) {
+      if (Math.abs(this.ball.x - (hitter === 'player' ? this.player.x : this.ai.x)) < 25) {
         this.addFloatingText('SWEET SPOT! ✨', this.ball.x, this.ball.y, '#38bdf8');
       }
     }
 
     // Directional angling based on hit offset from racket center
     const hitterX = hitter === 'player' ? this.player.x : this.ai.x;
-    const offset = (this.ball.x - hitterX) / 30; // -1 to 1
-    const angleX = offset * 220;
+    const offset = (this.ball.x - hitterX) / 35; // -1 to 1
+    const angleX = offset * 180;
 
     this.ball.vy = speedY;
     this.ball.vx = angleX;
@@ -613,7 +640,7 @@ export class TennisEngine {
     this.ball.x += this.ball.vx * dt;
     this.ball.y += this.ball.vy * dt;
     this.ball.z += this.ball.vz;
-    this.ball.vz -= 0.18; // gravity
+    this.ball.vz -= 0.12; // Gentle float gravity for generous reaction time
 
     // Trail
     if (Math.abs(this.ball.vy) > 200) {
@@ -753,6 +780,7 @@ export class TennisEngine {
       aiGames: this.score.aiGames,
       lastShotType: this.lastShotType,
       server: this.server,
+      speedMode: this.speedMode,
     });
   }
 
